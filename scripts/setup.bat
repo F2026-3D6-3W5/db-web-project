@@ -45,7 +45,7 @@ if not exist "..\.tools\dab-tool\dab.cmd" (
 
 :env
 if not exist "..\config\.env" (
-  copy "..\config\env.example" "..\config\.env" >nul
+  copy "..\config\.env.example" "..\config\.env"
   echo Created config\.env - open it and check the server name for this computer.
 )
 
