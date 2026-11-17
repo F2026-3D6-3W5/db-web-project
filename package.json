@@ -4,6 +4,7 @@
   "private": true,
   "description": "Databases/Web 1 project: web front end + Data API Builder + SQL Server",
   "scripts": {
+    "postinstall": "scripts\\setup.bat",
     "setup": "scripts\\setup.bat",
     "schema": "scripts\\schema.bat",
     "data": "scripts\\data.bat",
