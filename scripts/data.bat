@@ -15,11 +15,18 @@ if errorlevel 1 (
     echo DAB is not running. Starting...
 
     powershell -Command ^
-      "Start-Process cmd.exe -ArgumentList '/c dab.cmd start --config ..\config\dab-config.json' -WindowStyle Hidden"
+      "Start-Process cmd.exe -WindowStyle Hidden -ArgumentList '/c dab.cmd start --config ..\config\dab-config.json > ..\logs\dab.log 2>&1'"
+
+    if errorlevel 1 (
+        echo Launch DAB failed, check ..\logs\dab.log for details.
+    ) else (
+        echo Launch DAB succeeded but check ..\logs\dab.log for details if it doesn't get detected next
+    )
 
     rem Wait until our endpoint is avaiable before continuing:
     :waitfordab
-      curl -s http://localhost:5000/ >nul 2>&1
+      curl -s http://localhost:5000/ 
+      rem >nul 2>&1
 
       if errorlevel 1 (
           echo Waiting for DAB to start...

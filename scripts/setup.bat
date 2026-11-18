@@ -7,6 +7,8 @@ set "TOOLCHAIN_URL=https://github.com/John-Abbott-College/3D6-project/releases/d
 set "TOOLCHAIN_SHA256=073446e0a84474925f59f0785204cb85c68e9d5de3caa151d9b361840f7d168b"
 rem ======================================
 
+if not exist "..\logs" mkdir "..\logs"
+
 if exist "..\.tools\dab-tool\dab.cmd" (
   echo Toolchain already installed.
   goto :env

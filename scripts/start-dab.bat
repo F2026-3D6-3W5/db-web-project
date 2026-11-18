@@ -1,7 +1,7 @@
 @echo off
 cd /d "%~dp0"
 if not exist "..\config\.env" (
-  echo config\.env not found. Run setup.bat first.
+  echo config\.env not found. Run npm install first and edit the .env file in the config folder.
   exit /b 1
 )
 for /f "usebackq eol=# tokens=1,* delims==" %%a in ("..\config\.env") do set "%%a=%%b"
@@ -9,14 +9,32 @@ for /f "usebackq eol=# tokens=1,* delims==" %%a in ("..\config\.env") do set "%%
 set "DOTNET_ROOT=%~dp0..\.tools\dab-tool\dotnet"
 set "PATH=%~dp0..\.tools\dab-tool;%DOTNET_ROOT%;%PATH%"
 
-@echo off
-
 curl -s http://localhost:5000/ >nul 2>&1
 
 if errorlevel 1 (
     echo DAB is not running. Starting...
-    
-    call dab start --config ..\config\dab-config.json
+
+    powershell -Command ^
+      "Start-Process cmd.exe -WindowStyle Hidden -ArgumentList '/c dab.cmd start --config ..\config\dab-config.json > ..\logs\dab.log 2>&1'"
+
+    if errorlevel 1 (
+        echo Launch DAB failed, check ..\logs\dab.log for details.
+    ) else (
+        echo Launch DAB succeeded but check ..\logs\dab.log for details if it doesn't get detected next
+    )
+
+    rem Wait until our endpoint is avaiable before continuing:
+    :waitfordab
+      curl -s http://localhost:5000/ 
+      rem >nul 2>&1
+
+      if errorlevel 1 (
+          echo Waiting for DAB to start...
+          timeout /t 1 >nul
+          goto waitfordab
+      )
+
+    echo DAB is ready.
 ) else (
     echo DAB is already running.
 )
