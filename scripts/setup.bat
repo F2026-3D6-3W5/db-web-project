@@ -19,7 +19,7 @@ if not exist "%ZIP%" (
   powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; Invoke-WebRequest '%TOOLCHAIN_URL%' -OutFile '!ZIP!'"
   if errorlevel 1 (
     echo.
-    echo Download failed. Ask your teacher for toolchain.zip, put it in this folder, and run setup.bat again.
+    echo Download failed. Ask your teacher for toolchain.zip, put it in this scripts folder, and run npm install  again.
     exit /b 1
   )
 )
@@ -36,8 +36,10 @@ if defined TOOLCHAIN_SHA256 (
 
 echo Unpacking...
 if not exist "..\.tools" mkdir "..\.tools"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -LiteralPath '!ZIP!' -DestinationPath '..\.tools' -Force"
-if not exist "..\.tools\dab-tool\dab.cmd" (
+tar -xf "!ZIP!" -C "..\.tools"
+if exist "..\.tools\dab-tool\dab.cmd" (
+  echo done.
+) else (
   echo Unpack failed: ..\.tools\dab-tool\dab.cmd not found.
   exit /b 1
 )
@@ -53,7 +55,9 @@ set "PATH=%~dp0..\.tools\dab-tool;%DOTNET_ROOT%;%PATH%"
 echo.
 call dab --version
 rem .NET launcher failures return negative exit codes, so test for "not 0"
-if not %errorlevel%==0 (
+if %errorlevel%==0 (
+  echo DAB started successfully.
+) else (
   echo DAB did not start. See the Troubleshooting section of README.md.
   exit /b 1
 )
